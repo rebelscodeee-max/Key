@@ -1,14 +1,11 @@
 {
   "allowed": [
-    9672056994,
-    8722304170,
-    88772104,
-    9125837846, -- 62895340121466
-    9811022144
+    { "name": "Owner Dummysih", "id": 9672056994 },
+    { "name": "Owner KTKCxRebels", "id": 8722304170 },
+    { "name": "Owner lupadangapa", "id": 9811022144 },
+    { "name": "YAHAYUKxGOJEK", "id": 9125837846 }
   ]
 }
-
-
 
 
 
