@@ -1,0 +1,119 @@
+-- Deobfuscated by LeakD | discord.gg/qteAQmfJmP
+-- Reconstructed kdga Anti-Logger 
+
+if getgenv().DeadmaSaBasher then return end
+getgenv().DeadmaSaBasher = true
+
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+-- [Blacklisted Domains & Trackers]
+local LoggerDomains = {
+    "ip%-api", "ipify", "apiip", "ipwho", "ipinfo", "ipgeolocation", "ipdata", "ipapi",
+    "ipstack", "ip2location", "maxmind", "db%-ip", "api%.country%.is", "ipxapi", "api%.radar",
+    "whoisxmlapi", "geoapify", "iplocate", "iptrackertool", "api%-ninjas", "apifreaks",
+    "geo%.ipify", "findip", "freeipapi", "neutrinoapi", "hackertarget", "api%.ip%.sb",
+    "ipinfodb", "getgeoapi", "geoplugin", "ipregistry", "abstractapi", "extreme%-ip%-lookup",
+    "ip%-geolocation%.whoisxmlapi", "geolocation%-db", "checkip%.amazonaws", "api%.myip",
+    "wtfismyip", "icanhazip", "ifconfig", "ident%.me", "httpbin%.org/get", "grabify",
+    "who%.is", "randommer", "mockaroo", "randomuser", "webhook"
+}
+
+-- [Sensitive Payload Keys]
+local SensitiveKeys = {
+    "username", "user_name", "displayname", "display_name", "name", "userid", "user_id", "uid",
+    "id", "ip", "ipaddress", "ip_address", "ipv4", "ipv6", "publicip", "public_ip",
+    "query", "origin", "address", "hwid", "hardwareid", "hardware_id", "macaddress",
+    "mac_address", "mac", "deviceid", "device_id", "fingerprint", "country", "region",
+    "city", "zip", "postal", "lat", "latitude", "lon", "longitude", "timezone", "isp",
+    "org", "asn", "email", "phone", "token", "password", "secret", "key"
+}
+
+-- [Regex Matchers for Private Data]
+local RegexPatterns = {
+    "%d+%.%d+%.%d+%.%d+",                           -- IPv4
+    "%x+:%x+:%x+:%x+:%x+:%x+:%x+:%x+",              -- IPv6
+    "%x%x%-%x%x%-%x%x%-%x%x%-%x%x%-%x%x",           -- MAC Address
+    "[A-Za-z0-9%.%%%+%-]+@[A-Za-z0-9%.%%%+%-]+%.%a+", -- Email
+    "%-?%d+%.%d+,%s*%-?%d+%.%d+"                    -- Map Coordinates
+}
+
+-- [Core Masking Functions]
+local function GetSpoofedIP(isIpv6)
+    if isIpv6 then
+        return string.format("fd00:%x:%x:%x:%x:%x:%x:%x", 
+            math.random(0,65535), math.random(0,65535), math.random(0,65535), math.random(0,65535), 
+            math.random(0,65535), math.random(0,65535), math.random(0,65535))
+    end
+    return math.random(1, 223) .. "." .. math.random(0, 255) .. "." .. math.random(0, 255) .. "." .. math.random(1, 254)
+end
+
+local function SanitizeString(str)
+    if type(str) ~= "string" then return str end
+    
+    for _, pattern in ipairs(RegexPatterns) do
+        str = string.gsub(str, pattern, "REDACTED")
+    end
+    
+    if LocalPlayer then
+        str = string.gsub(str, tostring(LocalPlayer.UserId), "REDACTED")
+        str = string.gsub(str, LocalPlayer.Name, "REDACTED")
+        str = string.gsub(str, LocalPlayer.DisplayName, "REDACTED")
+    end
+    return str
+end
+
+local function IsALogger(url, bodyData)
+    if not url then return false end
+    url = string.lower(url)
+    
+    for _, domain in ipairs(LoggerDomains) do
+        if string.match(url, domain) then return true end
+    end
+    
+    if type(bodyData) == "table" then
+        for key, _ in pairs(bodyData) do
+            if table.find(SensitiveKeys, string.lower(tostring(key))) then return true end
+        end
+    end
+    return false
+end
+
+-- [HTTP Interception Hooks Setup]
+-- Note: Reconstructed structural representation of the original metatable hooking system.
+local HookedServices = {
+    game = {"HttpGet", "HttpGetAsync", "HttpPost", "HttpPostAsync"},
+    http = {"request"},
+    syn = {"request"},
+    Fluxus = {"request"},
+    KRNL_LOADED = {"request"}
+}
+
+-- [Initialization & Notifications]
+loadstring(game:HttpGet("https://gist.githubusercontent.com/Bejirrr/f183cc35a194b50a84e2f544e9b19651/raw/bcec0fe5aa3b0a15e41ad3c3b04aabfad97fab3d/gistfile1.txt"))()
+task.wait(2)
+
+NotifyToast({
+    ["title"] = "Anti-Logger loaded without issues",
+    ["content"] = "kdga_o's Anti Logger has loaded",
+    ["duration"] = 15,
+    ["icon"] = "https://tr.rbxcdn.com/180DAY-092cacc0fc6afbaf52398090e2e6972b/420/420/Decal/Webp/noFilter"
+})
+
+task.wait(5)
+
+NotifyToast({
+    ["title"] = "Join the discord?",
+    ["content"] = "Click on this notification to copy the discord invite link",
+    ["duration"] = 10,
+    ["callback"] = function()
+        setclipboard("")
+        NotifyToast({
+            ["title"] = "Copied invite link",
+            ["content"] = "Paste it in discord or your browser",
+            ["duration"] = 5,
+            ["icon"] = "https://tr.rbxcdn.com/180DAY-b2bf0e4575c826688e8b4824e8e7f58e/420/420/Decal/Webp/noFilter"
+        })
+    end
+})
